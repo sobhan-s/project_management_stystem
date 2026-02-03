@@ -1,0 +1,7 @@
+echo "✅ Running lint staged"
+npx lint-staged || exit 1
+
+echo "✅ Running full commit checks"
+npm run test:commit || exit 1
+
+echo "✅ All checks passed. Commit allowed "
