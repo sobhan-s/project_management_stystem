@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { response } from 'express';
 import { config } from './config/envConfig.js';
 import { logger } from './config/logger.config.js';
 import { initializeDatabase } from './database/Migrate.js';
@@ -17,6 +17,14 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use((req, _res, next) => {
   logger.debug(`${req.method} ${req.path}`);
   next();
+});
+
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  });
 });
 
 app.use('/api/v1/auth', authRoutes);
