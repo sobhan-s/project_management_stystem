@@ -49,11 +49,7 @@ export const addProjectMember = (
     throw new ApiError(409, 'User is already a member of this project');
   }
 
-  const member = projectMemberRepository.create(
-    projectId,
-    takenUserId,
-    role,
-  );
+  const member = projectMemberRepository.create(projectId, takenUserId, role);
 
   logger.info('Project member added', {
     projectId,
@@ -61,7 +57,7 @@ export const addProjectMember = (
     role: role,
   });
   return mapProjectMember(member);
- };
+};
 
 export const emailToIdService = (email: string): number => {
   logger.info('start fetching id to email');

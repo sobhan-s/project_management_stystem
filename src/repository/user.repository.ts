@@ -50,12 +50,12 @@ export const userRepository = {
       .prepare(`SELECT id FROM users where email = ?`)
       .get(email);
 
-    type res  = {
-      id : number
-    }
-    const id = (result as res).id as number
+    type res = {
+      id: number;
+    };
+    const id = (result as res).id as number;
 
-    console.log("===========",id);
+    console.log('===========', id);
     return id;
   },
 

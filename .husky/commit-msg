@@ -1,1 +1,5 @@
+echo "✅ chekcing commit message"
+
 npx --no -- commitlint --edit "$1"
+
+echo "✅ FINALLY DONE"
