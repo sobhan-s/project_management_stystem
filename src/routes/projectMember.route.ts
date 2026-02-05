@@ -19,6 +19,6 @@ router.use(authMiddleware);
 router.post('/:projectId/members/add', validate(addMemberSchema), addMemberHandler);
 router.get('/:projectId/members', getMembersHandler);
 router.patch('/:projectId/members/updateRole', validate(updateMemberRoleSchema), updateMemberHandler);
-router.delete('/:projectId/members/:userId', removeMemberHandler);
+router.delete('/:projectId/members/removeRole', removeMemberHandler);
 
 export default router;

@@ -39,7 +39,14 @@ export const getMembersHandler = async (req: Request, res: Response) => {
 export const updateMemberHandler = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
   const projectId = Number(req.params.projectId);
-  const targetUserId = Number(req.params.userId);
+  // const targetUserId = Number(req.params.userId);
+  const email = req.query.email as string;
+  if (!email) {
+    return res.status(400).json({
+      message: 'Email Field is not there ',
+    });
+  }
+  const targetUserId = emailToIdService(email);
   const result = updateProjectMemberRole(
     projectId,
     userId,
@@ -59,7 +66,14 @@ export const updateMemberHandler = async (req: Request, res: Response) => {
 export const removeMemberHandler = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
   const projectId = Number(req.params.projectId);
-  const targetUserId = Number(req.params.userId);
+  // const targetUserId = Number(req.params.userId);
+  const email = req.query.email as string;
+  if (!email) {
+    return res.status(400).json({
+      message: 'Email Field is not there ',
+    });
+  }
+  const targetUserId = emailToIdService(email);
   removeProjectMember(projectId, userId, targetUserId);
   const response = new ApiResponse(204, null, 'Member removed successfully');
   res
