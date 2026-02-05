@@ -6,11 +6,14 @@ import authRoutes from './routes/auth.routes.js';
 import userRoutes from './routes/user.route.js';
 import projectRoutes from './routes/projects.route.js';
 import projectMemberRoutes from './routes/projectMember.route.js';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger.config.js';
 
 const app = express();
 
 app.use(express.json());
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use((req, _res, next) => {
   logger.debug(`${req.method} ${req.path}`);
   next();
