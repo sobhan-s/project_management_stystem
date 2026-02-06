@@ -48,15 +48,42 @@ export interface Project {
   updated_at: string;
 }
 
+export interface Permission {
+  id: number;
+  name: string;
+  description: string | null;
+  resource: string;
+  action: string;
+  created_at: string;
+}
+
+export interface Role {
+  id: number;
+  name: string;
+  description: string | null;
+  level: number;
+  created_at: string;
+}
+
+export interface RolePermission {
+  id: number;
+  role_id: number;
+  permission_id: number;
+  created_at: string;
+}
+
 export interface ProjectMember {
   id: number;
   project_id: number;
   user_id: number;
-  role: 'OWNER' | 'ADMIN' | 'MEMBER';
+  role_id: number;
   joined_at: string;
 }
 
-export type Role = 'OWNER' | 'ADMIN' | 'MEMBER';
+export interface ProjectMemberWithRole extends ProjectMember {
+  role_name: string;
+  role_level: number;
+}
 
 export interface TokenPayload {
   userId: number;

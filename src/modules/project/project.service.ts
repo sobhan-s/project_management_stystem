@@ -8,7 +8,11 @@ import {
   type ProjectResponse,
 } from '../../mappers/index.js';
 import type { Role } from '../../interfaces/index.js';
-import { assertPermission, getMembership } from '../../utils/Rbac.js';
+import {
+  assertPermission,
+  getMembership,
+  getRoleByName,
+} from '../../utils/Rbac.js';
 
 export const createProject = (
   userId: number,
@@ -22,13 +26,17 @@ export const createProject = (
     created_by: userId,
   });
 
-  projectMemberRepository.create(project.id, userId, 'OWNER');
+  const ownerRole = getRoleByName('OWNER');
+  logger.info('owner role is ', ownerRole);
+  projectMemberRepository.create(project.id, userId, ownerRole.id);
+
   logger.info('Project created successfully', { projectId: project.id });
   return mapProject(project);
 };
 
 export const getProjects = (userId: number): ProjectResponse[] => {
   logger.info('Fetching projects for user', { userId });
+
   const projects = projectRepository.findByUserId(userId);
   return projects.map(mapProject);
 };
@@ -46,7 +54,7 @@ export const getProjectById = (
   }
   const membership = getMembership(projectId, userId);
 
-  assertPermission(membership.role as Role, 'PROJECT_VIEW');
+  assertPermission(membership.role_id, 'project:view');
 
   return mapProject(project);
 };
@@ -68,7 +76,7 @@ export const updateProject = (
 
   const membership = getMembership(projectId, userId);
 
-  assertPermission(membership.role as Role, 'PROJECT_UPDATE');
+  assertPermission(membership.role_id, 'project:update');
 
   const updatedProject = projectRepository.update(projectId, data);
 
@@ -92,7 +100,7 @@ export const deleteProject = (projectId: number, userId: number): void => {
 
   const membership = getMembership(projectId, userId);
 
-  assertPermission(membership.role as Role, 'PROJECT_DELETE');
+  assertPermission(membership.role_id, 'project:delete');
 
   projectRepository.delete(projectId);
 
@@ -110,7 +118,7 @@ export const getProjectMembers = (projectId: number, userId: number) => {
 
   const membership = getMembership(projectId, userId);
 
-  assertPermission(membership.role as Role, 'MEMBER_LIST');
+  assertPermission(membership.role_id, 'member:list');
 
   const members = projectMemberRepository.findByProject(projectId);
 

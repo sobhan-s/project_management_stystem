@@ -7,9 +7,11 @@ import {
   updateProject,
   deleteProject,
 } from './project.service.js';
+import { logger } from '../../config/logger.config.js';
 
 export const createProjectHandler = async (req: Request, res: Response) => {
   const userId = (req as any).userId;
+  logger.info('userId', userId);
   const result = createProject(userId, req.body);
   const response = new ApiResponse(201, result, 'Project created successfully');
   res

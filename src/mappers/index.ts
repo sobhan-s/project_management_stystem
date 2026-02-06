@@ -1,4 +1,8 @@
-import type { User, Project, ProjectMember } from '../interfaces/index.js';
+import type {
+  User,
+  Project,
+  ProjectMemberWithRole,
+} from '../interfaces/index.js';
 import { userRepository } from '../repository/user.repository.js';
 
 export interface UserResponse {
@@ -56,7 +60,7 @@ export const mapProject = (project: Project): ProjectResponse => ({
 });
 
 export const mapProjectMember = (
-  member: ProjectMember,
+  member: ProjectMemberWithRole,
 ): ProjectMemberResponse => {
   const user = userRepository.findById(member.user_id);
   return {
@@ -65,13 +69,13 @@ export const mapProjectMember = (
     user_id: member.user_id,
     username: user?.username ?? '',
     email: user?.email ?? '',
-    role: member.role,
+    role: member.role_name,
     joined_at: member.joined_at,
   };
 };
 
 export const mapProjectMembers = (
-  members: ProjectMember[],
+  members: ProjectMemberWithRole[],
 ): ProjectMemberResponse[] => {
   return members.map(mapProjectMember);
 };

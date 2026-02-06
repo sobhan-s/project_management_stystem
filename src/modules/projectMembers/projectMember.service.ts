@@ -13,6 +13,7 @@ import {
   assertPermission,
   assertCanManage,
   assertCanAssign,
+  getRoleByName,
 } from '../../utils/Rbac.js';
 
 export const addProjectMember = (
@@ -33,8 +34,12 @@ export const addProjectMember = (
   }
 
   const actorMembership = getMembership(projectId, givenUserId);
-  assertPermission(actorMembership.role as Role, 'MEMBER_ADD');
-  assertCanAssign(actorMembership.role as Role, role as Role);
+  logger.info('asdf===', actorMembership);
+  assertPermission(actorMembership.role_id, 'member:add');
+
+  const assigningRole = getRoleByName(role);
+
+  assertCanAssign(actorMembership.role_level, assigningRole.level);
 
   const targetUser = userRepository.findById(takenUserId);
   if (!targetUser) {
@@ -49,7 +54,11 @@ export const addProjectMember = (
     throw new ApiError(409, 'User is already a member of this project');
   }
 
-  const member = projectMemberRepository.create(projectId, takenUserId, role);
+  const member = projectMemberRepository.create(
+    projectId,
+    takenUserId,
+    assigningRole.id,
+  );
 
   logger.info('Project member added', {
     projectId,
@@ -82,7 +91,7 @@ export const updateProjectMemberRole = (
   }
 
   const actorMembership = getMembership(projectId, actorUserId);
-  assertPermission(actorMembership.role as Role, 'MEMBER_UPDATE');
+  assertPermission(actorMembership.role_id, 'member:update');
 
   const targetMembership = projectMemberRepository.findByProjectAndUser(
     projectId,
@@ -96,13 +105,14 @@ export const updateProjectMemberRole = (
     throw new ApiError(400, 'You cannot change your own role');
   }
 
-  assertCanManage(actorMembership.role as Role, targetMembership.role as Role);
-  assertCanAssign(actorMembership.role as Role, data.role as Role);
+  assertCanManage(actorMembership.role_level, targetMembership.role_level);
+  const newRole = getRoleByName(data.role);
+  assertCanAssign(actorMembership.role_level, newRole.level);
 
   const updatedMember = projectMemberRepository.updateRole(
     projectId,
     targetUserId,
-    data.role,
+    newRole.id,
   );
   if (!updatedMember) {
     throw new ApiError(500, 'Failed to update member role');
@@ -143,8 +153,11 @@ export const removeProjectMember = (
   }
 
   if (actorUserId === targetUserId) {
-    if (targetMembership.role === 'OWNER') {
-      const ownerCount = projectMemberRepository.countOwners(projectId);
+    if (targetMembership.role_name === 'OWNER') {
+      const ownerCount = projectMemberRepository.countByRole(
+        projectId,
+        'OWNER',
+      );
       if (ownerCount <= 1) {
         throw new ApiError(
           404,
@@ -157,11 +170,11 @@ export const removeProjectMember = (
     return;
   }
 
-  assertPermission(actorMembership.role as Role, 'MEMBER_REMOVE');
-  assertCanManage(actorMembership.role as Role, targetMembership.role as Role);
+  assertPermission(actorMembership.role_id, 'member:remove');
+  assertCanManage(actorMembership.role_level, targetMembership.role_level);
 
-  if (targetMembership.role === 'OWNER') {
-    const ownerCount = projectMemberRepository.countOwners(projectId);
+  if (targetMembership.role_name === 'OWNER') {
+    const ownerCount = projectMemberRepository.countByRole(projectId, 'OWNER');
     if (ownerCount <= 1) {
       throw new ApiError(400, 'Cannot remove the last owner');
     }
