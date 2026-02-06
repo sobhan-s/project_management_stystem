@@ -18,7 +18,7 @@ router.use(authMiddleware);
 
 /**
  * @swagger
- * /projects/{projectId}/members/add:
+ * /prMembers/{projectId}/members/add:
  *   post:
  *     summary: Add a member to a project
  *     tags: [Project Members]
@@ -66,7 +66,7 @@ router.post(
 
 /**
  * @swagger
- * /projects/{projectId}/members:
+ * /prMembers/{projectId}/members:
  *   get:
  *     summary: Get all members of a project
  *     tags: [Project Members]
@@ -94,7 +94,7 @@ router.get('/:projectId/members', getMembersHandler);
 
 /**
  * @swagger
- * /projects/{projectId}/members/updateRole:
+ * /prMembers/{projectId}/members/updateRole:
  *   patch:
  *     summary: Update project member role
  *     tags: [Project Members]
@@ -145,7 +145,7 @@ router.patch(
 
 /**
  * @swagger
- * /projects/{projectId}/members/removeRole:
+ * /prMembers/{projectId}/members/removeRole:
  *   delete:
  *     summary: Remove a member from project
  *     tags: [Project Members]
