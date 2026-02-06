@@ -8,10 +8,17 @@ import projectRoutes from './routes/projects.route.js';
 import projectMemberRoutes from './routes/projectMember.route.js';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './config/swagger.config.js';
+import cors from 'cors';
 
 const app = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  }),
+);
 
 app.use((req, _res, next) => {
   logger.debug(`${req.method} ${req.path}`);
@@ -35,7 +42,7 @@ app.use('/api/v1/prMembers', projectMemberRoutes);
 
 initializeDatabase();
 
-app.listen(config.port, () => {
+app.listen(config.port, '0.0.0.0', () => {
   logger.info(`Server running on port ${config.port}`);
 });
 

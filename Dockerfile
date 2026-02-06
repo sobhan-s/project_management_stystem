@@ -1,6 +1,6 @@
 ARG NODE_VERSION=22.22.0
 
-FROM node:${NODE_VERSION}-alpine AS base
+FROM node:22.22.0-alpine
 
 WORKDIR /usr/src/app
 
