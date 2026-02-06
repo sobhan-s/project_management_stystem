@@ -13,7 +13,6 @@ const app = express();
 
 app.use(express.json());
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use((req, _res, next) => {
   logger.debug(`${req.method} ${req.path}`);
   next();
@@ -26,6 +25,8 @@ app.get('/health', (req, res) => {
     uptime: process.uptime(),
   });
 });
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/users', userRoutes);
